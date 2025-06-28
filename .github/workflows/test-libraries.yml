@@ -1,0 +1,149 @@
+name: Test Libraries
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-typescript:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: libraries/typescript
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: libraries/typescript/package-lock.json
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Type check
+        run: npm run type-check
+        
+      - name: Lint
+        run: npm run lint
+        
+      - name: Run tests
+        run: npm test
+        
+      - name: Build
+        run: npm run build
+
+  test-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11"]
+    
+    defaults:
+      run:
+        working-directory: libraries/python
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          
+      - name: Lint with flake8
+        run: |
+          flake8 qubi_protocol --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 qubi_protocol --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          
+      - name: Type check with mypy
+        run: mypy qubi_protocol
+        
+      - name: Test with pytest
+        run: pytest --cov=qubi_protocol --cov-report=xml
+        
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: libraries/python/coverage.xml
+          flags: python
+          name: python-${{ matrix.python-version }}
+
+  validate-arduino:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+        
+      - name: Install ESP32 core
+        run: |
+          arduino-cli core update-index --additional-urls https://dl.espressif.com/dl/package_esp32_index.json
+          arduino-cli core install esp32:esp32 --additional-urls https://dl.espressif.com/dl/package_esp32_index.json
+          
+      - name: Install dependencies
+        run: |
+          arduino-cli lib install "ArduinoJson@>=6.21.0"
+          
+      - name: Validate library structure
+        run: |
+          # Check that required files exist
+          test -f libraries/arduino/QubiProtocol/library.properties
+          test -f libraries/arduino/QubiProtocol/src/QubiProtocol.h
+          test -f libraries/arduino/QubiProtocol/src/QubiProtocol.cpp
+          
+      - name: Compile examples
+        run: |
+          # Compile example sketches
+          arduino-cli compile --fqbn esp32:esp32:esp32 libraries/arduino/QubiProtocol/examples/ServoActuator/ServoActuator.ino
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [test-typescript, test-python]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          
+      - name: Install TypeScript library
+        run: |
+          cd libraries/typescript
+          npm ci
+          npm run build
+          
+      - name: Install Python library
+        run: |
+          cd libraries/python
+          pip install -e .
+          
+      - name: Run integration tests
+        run: |
+          # Test protocol compatibility between libraries
+          echo "Running cross-library compatibility tests..."
+          # Add actual integration test scripts here

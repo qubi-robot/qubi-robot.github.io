@@ -1,0 +1,146 @@
+const {themes} = require('prism-react-renderer');
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.dracula;
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
+  title: 'Qubi Protocol',
+  tagline: 'Modular Social Robot Communication Protocol',
+  favicon: 'img/favicon.ico',
+
+  url: 'https://qubi-robot.github.io',
+  baseUrl: '/',
+
+  organizationName: 'qubi-robot',
+  projectName: 'qubi-robot.github.io',
+  deploymentBranch: 'gh-pages',
+  trailingSlash: false,
+
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'ja'],
+  },
+
+  presets: [
+    [
+      'classic',
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
+        docs: {
+          sidebarPath: './sidebars.js',
+          editUrl: 'https://github.com/qubi-robot/qubi-robot.github.io/tree/main/',
+          remarkPlugins: [require('remark-math')],
+          rehypePlugins: [require('rehype-katex')],
+        },
+        blog: {
+          showReadingTime: true,
+          editUrl: 'https://github.com/qubi-robot/qubi-robot.github.io/tree/main/',
+        },
+        theme: {
+          customCss: './src/css/custom.css',
+        },
+      }),
+    ],
+  ],
+
+  stylesheets: [
+    {
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css',
+      type: 'text/css',
+      integrity: 'sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM',
+      crossorigin: 'anonymous',
+    },
+  ],
+
+  themeConfig:
+    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    ({
+      image: 'img/qubi-social-card.jpg',
+      navbar: {
+        title: 'Qubi Protocol',
+        logo: {
+          alt: 'Qubi Logo',
+          src: 'img/logo.svg',
+        },
+        items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'tutorialSidebar',
+            position: 'left',
+            label: 'Documentation',
+          },
+          {to: '/blog', label: 'Blog', position: 'left'},
+          {
+            type: 'localeDropdown',
+            position: 'right',
+          },
+          {
+            href: 'https://github.com/qubi-robot/qubi-robot.github.io',
+            label: 'GitHub',
+            position: 'right',
+          },
+        ],
+      },
+      footer: {
+        style: 'dark',
+        links: [
+          {
+            title: 'Documentation',
+            items: [
+              {
+                label: 'Getting Started',
+                to: '/docs/intro',
+              },
+              {
+                label: 'API Reference',
+                to: '/docs/api-reference/arduino',
+              },
+              {
+                label: 'Tutorials',
+                to: '/docs/tutorials/custom-module',
+              },
+            ],
+          },
+          {
+            title: 'Libraries',
+            items: [
+              {
+                label: 'Arduino/ESP32',
+                to: '/docs/api-reference/arduino',
+              },
+              {
+                label: 'TypeScript',
+                to: '/docs/api-reference/typescript',
+              },
+              {
+                label: 'Python',
+                to: '/docs/api-reference/python',
+              },
+            ],
+          },
+          {
+            title: 'More',
+            items: [
+              {
+                label: 'Blog',
+                to: '/blog',
+              },
+              {
+                label: 'GitHub',
+                href: 'https://github.com/qubi-robot/qubi-robot.github.io',
+              },
+            ],
+          },
+        ],
+        copyright: `Copyright © ${new Date().getFullYear()} Qubi Project. Built with Docusaurus.`,
+      },
+      prism: {
+        theme: lightCodeTheme,
+        darkTheme: darkCodeTheme,
+        additionalLanguages: ['arduino', 'json', 'python', 'typescript'],
+      },
+    }),
+};
