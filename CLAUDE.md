@@ -40,6 +40,13 @@ npm run test:ts      # TypeScript library tests
 npm run deploy       # Deploy to GitHub Pages
 ```
 
+**Requirements**:
+```bash
+# Node.js 20.x or higher required
+# Python 3.9 or higher for Python library
+# ESP32 Arduino Core 2.x or higher
+```
+
 ## Key Implementation Details
 
 **Protocol Specification**:

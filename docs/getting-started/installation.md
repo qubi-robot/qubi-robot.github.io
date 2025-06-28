@@ -43,7 +43,7 @@ yarn add @qubi/protocol
 
 ### Requirements
 
-- Node.js 18.x or higher
+- Node.js 20.x or higher
 - TypeScript 5.x (optional, for TypeScript projects)
 
 ## Python Library
@@ -56,7 +56,7 @@ pip install qubi-protocol
 
 ### Requirements
 
-- Python 3.8 or higher
+- Python 3.9 or higher
 - No additional dependencies for basic usage
 
 ### Development Installation

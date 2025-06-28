@@ -1,0 +1,65 @@
+version: 2
+updates:
+  # Enable version updates for npm (main project)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "qubi-robot/maintainers"
+    assignees:
+      - "qubi-robot/maintainers"
+    commit-message:
+      prefix: "chore(deps):"
+      include: "scope"
+
+  # Enable version updates for TypeScript library
+  - package-ecosystem: "npm"
+    directory: "/libraries/typescript"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "qubi-robot/maintainers"
+    assignees:
+      - "qubi-robot/maintainers"
+    commit-message:
+      prefix: "chore(deps-ts):"
+      include: "scope"
+
+  # Enable version updates for Python library
+  - package-ecosystem: "pip"
+    directory: "/libraries/python"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "qubi-robot/maintainers"
+    assignees:
+      - "qubi-robot/maintainers"
+    commit-message:
+      prefix: "chore(deps-py):"
+      include: "scope"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:30"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "qubi-robot/maintainers"
+    assignees:
+      - "qubi-robot/maintainers"
+    commit-message:
+      prefix: "chore(actions):"
+      include: "scope"

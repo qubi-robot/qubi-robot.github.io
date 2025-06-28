@@ -1,0 +1,155 @@
+name: Security Checks
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run weekly security scan
+    - cron: '0 2 * * 1'
+
+permissions:
+  security-events: write
+  contents: read
+
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run npm audit
+        run: npm audit --audit-level moderate
+        
+      - name: Check for known vulnerabilities
+        run: |
+          npm audit --audit-level high --json > audit-results.json || true
+          if [ -s audit-results.json ]; then
+            echo "::warning::High-level vulnerabilities found"
+            cat audit-results.json
+          fi
+
+  typescript-security:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: libraries/typescript
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: libraries/typescript/package-lock.json
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: TypeScript security lint
+        run: |
+          # Check for potential security issues in TypeScript code
+          npm run lint
+          
+      - name: Dependency vulnerability scan
+        run: npm audit --audit-level moderate
+
+  python-security:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: libraries/python
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install safety bandit semgrep
+          pip install -e ".[dev]"
+          
+      - name: Run safety check
+        run: safety check
+        
+      - name: Run bandit security linter
+        run: bandit -r qubi_protocol -f json -o bandit-results.json || true
+        
+      - name: Upload bandit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-results
+          path: libraries/python/bandit-results.json
+
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      security-events: write
+      contents: read
+      
+    strategy:
+      matrix:
+        language: ['javascript', 'python']
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          
+      - name: Setup Node.js (for JavaScript)
+        if: matrix.language == 'javascript'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          
+      - name: Build JavaScript
+        if: matrix.language == 'javascript'
+        run: |
+          npm ci
+          cd libraries/typescript && npm ci && npm run build
+          
+      - name: Setup Python (for Python)
+        if: matrix.language == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          
+      - name: Install Python dependencies
+        if: matrix.language == 'python'
+        run: |
+          cd libraries/python
+          python -m pip install --upgrade pip
+          pip install -e .
+          
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
