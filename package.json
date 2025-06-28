@@ -16,7 +16,9 @@
     "test": "npm run test:arduino && npm run test:python && npm run test:ts",
     "test:arduino": "echo \"Arduino tests not implemented yet\"",
     "test:python": "echo \"Python tests not implemented yet\"",
-    "test:ts": "echo \"TypeScript tests not implemented yet\""
+    "test:ts": "echo \"TypeScript tests not implemented yet\"",
+    "prebuild": "echo 'Running build test...'",
+    "test:build": "npm run build"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.1",

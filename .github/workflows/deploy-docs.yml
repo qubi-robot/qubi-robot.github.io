@@ -7,7 +7,29 @@ on:
     branches: [main]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install --legacy-peer-deps
+        
+      - name: Test build
+        run: npm run build
+
   deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     
     permissions:
@@ -34,7 +56,7 @@ jobs:
           rm -rf node_modules package-lock.json
           npm install --legacy-peer-deps
         
-      - name: Build website
+      - name: Test build
         run: npm run build
         
       - name: Setup Pages
