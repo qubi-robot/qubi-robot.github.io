@@ -35,10 +35,7 @@ const config = {
           remarkPlugins: [require('remark-math')],
           rehypePlugins: [require('rehype-katex')],
         },
-        blog: {
-          showReadingTime: true,
-          editUrl: 'https://github.com/qubi-robot/qubi-robot.github.io/tree/main/',
-        },
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -72,7 +69,6 @@ const config = {
             position: 'left',
             label: 'Documentation',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
           {
             type: 'localeDropdown',
             position: 'right',
@@ -125,10 +121,6 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
                 label: 'GitHub',
                 href: 'https://github.com/qubi-robot/qubi-robot.github.io',
               },
@@ -144,3 +136,5 @@ const config = {
       },
     }),
 };
+
+module.exports = config;

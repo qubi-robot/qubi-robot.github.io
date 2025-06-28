@@ -55,7 +55,7 @@ graph LR
 
 ### 🚀 Low Latency
 - UDP transport for minimal overhead
-- Typical latency <10ms on local networks
+- Typical latency &lt;10ms on local networks
 - No connection establishment required
 
 ### 📦 Modular Design
@@ -175,12 +175,12 @@ Modules can be discovered using broadcast messages to `255.255.255.255:8888` wit
 - **Sustained**: 50-100 messages/second
 
 ### Latency
-- **Local Network**: <10ms
-- **Same Subnet**: <5ms
+- **Local Network**: &lt;10ms
+- **Same Subnet**: &lt;5ms
 - **Cross-Router**: 10-50ms (depends on network)
 
 ### Memory Usage
-- **ESP32**: <50KB for basic functionality
+- **ESP32**: &lt;50KB for basic functionality
 - **Message Buffer**: 1KB per message
 - **Command Queue**: Configurable depth
 

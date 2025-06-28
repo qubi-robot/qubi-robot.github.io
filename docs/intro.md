@@ -12,7 +12,7 @@ Qubi is designed for modular social robots where different components (actuators
 
 ## Key Features
 
-- **🚀 Low Latency**: UDP-based communication with <10ms latency
+- **🚀 Low Latency**: UDP-based communication with &lt;10ms latency
 - **📦 Modular Design**: Support for actuator, display, mobile, and sensor modules
 - **🌐 Multi-Language**: Libraries for Arduino/ESP32, TypeScript, and Python
 - **🔧 Type Safe**: Full TypeScript support with command builders
